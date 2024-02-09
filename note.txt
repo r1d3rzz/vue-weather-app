@@ -1,0 +1,3 @@
+
+
+https://api.openweathermap.org/data/2.5?q=location&units=metric&appid=21b8b66cf98b599f450f30e6844b9863
