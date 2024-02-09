@@ -31,12 +31,38 @@
               </div>
               <div id="date" class="fs-4">{{ date }}</div>
               <div id="weatherTemp" class="fs-4 my-3">
-                <span class="temp_bg glass_bg"
-                  >{{ Math.round(weather.main.temp) }}°C</span
-                >
+                <span class="temp_bg glass_bg flex-column">
+                  <div class="me-2">
+                    <span v-if="now.getHours() < 12">
+                      <img src="./assets/day.svg" alt="day-icon" width="40px" />
+                    </span>
+                    <span v-else>
+                      <img
+                        src="./assets/night.svg"
+                        alt="night-icon"
+                        width="40px"
+                      />
+                    </span>
+                  </div>
+                  <div>{{ Math.round(weather.main.temp) }}°C</div>
+                </span>
               </div>
               <div id="weatherStatus" class="fs-3">
-                {{ weather.weather[0].main }}
+                <div id="wind_status">
+                  <span>
+                    <img src="./assets/wind.svg" alt="wind-icon" />
+                  </span>
+                  {{ weather.wind.speed }}
+                  <span class="me-2 fs-5">(Wind Speed)</span>
+                </div>
+
+                <div id="cloud_status">
+                  <img src="./assets/cloud.svg" alt="cloud-icon" />
+                  {{ weather.weather[0].main }}
+                  <span class="fs-5">
+                    ({{ weather.weather[0].description }})
+                  </span>
+                </div>
               </div>
             </div>
             <div v-else>
@@ -53,19 +79,14 @@
 <script>
 import { onMounted, ref } from "vue";
 import getWeather from "@/composables/getWeather";
+import getCurrentDate from "@/composables/getCurrentDate";
 
 export default {
   setup() {
     let api_key = "21b8b66cf98b599f450f30e6844b9863";
     let base_url = "https://api.openweathermap.org/data/2.5/";
     let searchQuery = ref("Yangon");
-
-    const currentDate = new Date();
-    const currentDay = currentDate.getDate();
-    const currentMonth = currentDate.getMonth() + 1;
-    const currentYear = currentDate.getFullYear();
-
-    let date = currentDay + "-" + currentMonth + "-" + currentYear;
+    let now = new Date();
 
     let { error, weather, isError, load } = getWeather(
       searchQuery,
@@ -73,13 +94,15 @@ export default {
       api_key
     );
 
+    let { date } = getCurrentDate();
+
     load();
 
     onMounted(() => {
       load();
     });
 
-    return { searchQuery, weather, load, error, isError, date };
+    return { searchQuery, weather, load, error, isError, date, now };
   },
 };
 </script>
